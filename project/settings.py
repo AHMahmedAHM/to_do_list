@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-import os
-from pathlib import Path
 
+from pathlib import Path
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +20,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3$mq%)esq4mbn4rnc^+#m_%zp+8&q*xy$m1-**yw3ue8((9si1'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+#custom_user_model
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+#Authentication 
+AUTHENTICATION_BACKENDS =[
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.TripleAuthBackend',
+]
+
+
 
 
 # Application definition
@@ -70,18 +81,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER' : os.getenv('DB_USER'),
-        'PASSWORD' : os.getenv('DB_PASSWORD'),
-        'HOST' : os.getenv('DB_HOST','localhost'), 
-        'PORT' : int(os.getenv('DB_PORT'))
+        'ENGINE': config('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': config('DB_NAME'),
+        'USER' : config('DB_USER'),
+        'PASSWORD' : config('DB_PASSWORD'),
+        'HOST' : config('DB_HOST','localhost'), 
+        'PORT' : int(config('DB_PORT'))
     }
 }
 
@@ -121,3 +131,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+#accounts_url  ###way with or without reverse (:) or way (/) static or block url
+LOGIN_URL=('accounts:login')
+LOGIN_REDIRECT_URL =('pages:home') ####### will changed
+LOGOUT_REDIRECT_URL =('pages:home')
+
+
+#email 
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', True, cast=bool)
