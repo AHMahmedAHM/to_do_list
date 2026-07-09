@@ -133,6 +133,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT ='staticfiles'
+STATICFILES_DIRS =('static',) #لازم اكون tupke or list ولو tuple  لازم تحط ,
+
+#media 
+MEDIA_URL ='media/'
+MEDIA_ROOT = 'media'
 
 #accounts_url  ###way with or without reverse (:) or way (/) static or block url
 LOGIN_URL=('accounts:login')
