@@ -1,0 +1,146 @@
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.task-card-done { opacity: 0.6; }
+
+/* مجموعة الشمال: checkbox + صورة + عنوان مع بعض */
+.task-card-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.task-card-main { min-width: 0; }
+
+.task-title a {
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.task-title a:hover { color: var(--color-primary); }
+
+/* المهمة لما تكون complete */
+.task-card-done .task-title a {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+}
+
+.task-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.task-due { font-size: 0.8rem; color: var(--color-text-muted); }
+
+.checkbox-form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+.checkbox-form input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+/* صورة مصغرة ثابتة المقاس — للـ list بس */
+.task-thumbnail {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.task-thumbnail-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    font-size: 1.2rem;
+}
+
+/* Task detail */
+.task-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: start;
+}
+
+.task-detail-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.task-detail-side {
+    position: sticky;
+    top: 24px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+.detail-row:first-child { padding-top: 0; }
+
+.detail-label { font-size: 0.9rem; font-weight: 600; color: var(--color-text-muted); }
+.detail-value { font-size: 0.95rem; color: var(--color-text); }
+.text-muted { color: var(--color-text-muted); font-style: italic; }
+
+.task-description {
+    margin-top: 8px;
+    line-height: 1.8;
+    color: var(--color-text);
+    white-space: pre-wrap;
+}
+
+/* صورة صفحة التفاصيل — تعريف واحد بس دلوقتي، مختلفة عن thumbnail الليست */
+.task-image {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    margin-top: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.task-image:hover { transform: scale(1.02); }
+
+.image-info {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: 8px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .task-detail-grid { grid-template-columns: 1fr; }
+    .task-detail-side { position: static; }
+    .detail-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+}

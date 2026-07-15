@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import TaskForm, CategoryForm
 from .models import Task 
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages 
 
 ##هل لو عاوز اي حد يقدر يستخدمها احوش الديكور واعمل ال user im model null,blank 
 @login_required 
@@ -68,4 +69,21 @@ def add_category(request):
     }
 
     return render(request, 'tasks/add_category.html', context)
+
+
+@login_required
+def change_status(request, slug):
+    task = get_object_or_404(Task, slug=slug, user=request.user)
+    if task.status != 'later': #علشان لو لسه لم ابدا تنفيذ لا تتحدث حتي لا تنزل تحت 
+        if task.status == "complete" :
+            task.status ='doing'
+            messages.warning(request, 'تم الغاء اكتمال المهمة والمهمة اصبحت بالاسفل')
+    
+
+        elif task.status =="doing" :
+            task.status ='complete'
+    
+        task.save() #فكرة الupdate كلها هنا 
+    return redirect('tasks:tasks_list')
+
 

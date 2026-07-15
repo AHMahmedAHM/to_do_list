@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}My Tasks — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Tasks</h1>
+    <div class="page-header-actions">
+        <a href="{% url 'tasks:add_category' %}" class="btn btn-outline">+ Category</a>
+        <a href="{% url 'tasks:add_task' %}" class="btn btn-primary">+ Task</a>
+    </div>
+</div>
+
+<div class="task-list">
+    {% for task in tasks %}
+        <div class="card task-card {% if task.status == 'complete' %}task-card-done{% endif %}">
+
+            <div class="task-card-left">
+                <form method="POST" action="{% url 'tasks:change_status' task.slug %}" class="checkbox-form">
+                    {% csrf_token %}
+                    <input type="checkbox"
+                        aria-label="Mark task as complete"
+                        onchange="this.form.submit()"
+                        {% if task.status == 'complete' %}checked{% endif %}> {#checked  علشان يعلم صح  disabled علشان يعطلها بعد اتمام المهمة#}
+                </form>
+
+                {% if task.image %}
+                    <img src="{{ task.image.url }}" alt="{{ task.name }}" class="task-thumbnail">
+                {% else %}
+                    <div class="task-thumbnail task-thumbnail-empty">🗒️</div> {# حلوة الحتة دي#}
+                {% endif %}
+
+                <div class="task-card-main">
+                    <h2 class="task-title">
+                        <a href="{% url 'tasks:task_details' slug=task.slug %}">{{ task.name }}</a>
+                    </h2>
+                    {% if task.category %}
+                        <span class="badge">{{ task.category.name }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="task-card-meta">
+                {% if task.due_time %}
+                    <span class="task-due">Due {{ task.due_time }}</span>
+                {% endif %}
+                <span class="status status-{{ task.status }}">{{ task.status }}</span>
+            </div>
+
+        </div>
+    {% empty %} {#  نعملها لو معملناش شرط قبل اللوب if  #}
+        <div class="empty-state">
+            <p>No tasks yet.</p>
+            <a href="{% url 'tasks:add_task' %}" class="btn btn-primary">Create your first task</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

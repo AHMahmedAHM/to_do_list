@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ task.name }} — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ task.name }}</h1>
+    {% comment update %}
+    <div class="page-header-actions">
+        <a href="{% url 'tasks:update_task' task.slug %}" class="btn btn-outline">Edit</a> 
+        <form method="POST" action="{% url 'tasks:delete_task' task.slug %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline" style="color: var(--color-danger); border-color: var(--color-danger);" 
+                    onclick="return confirm('متأكد من حذف المهمة؟')">
+                Delete
+            </button>
+        </form>
+    {% endcomment %} 
+        <a href="{% url 'tasks:tasks_list' %}" class="btn btn-outline">← Back</a>
+    </div>
+</div>
+
+<div class="task-detail-grid">
+    {# العمود الرئيسي #}
+    <div class="task-detail-main">
+        {# الحالة والتاريخ #}
+        <div class="card">
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="status 
+                    {% if task.status == 'complete' %}status-complete
+                    {% elif task.status == 'doing' %}status-doing
+                    {% elif task.status == 'later' %}status-later
+                    {% endif %}">
+                    {{ task.get_status_display }}
+                </span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Due Date</span>
+                <span class="detail-value">
+                    {% if task.due_time %}
+                        {{ task.due_time }}
+                    {% else %}
+                        <span class="text-muted">No due date</span>
+                    {% endif %}
+                </span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Category</span>
+                <span class="detail-value">
+                    {% if task.category %}
+                        {{ task.category.name }}
+                    {% else %}
+                        <span class="text-muted">No category</span>
+                    {% endif %}
+                </span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Created</span>
+                <span class="detail-value">{{ task.created_at|date:"Y-m-d" }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Updated</span>
+                <span class="detail-value">{{ task.updated_at|date:"Y-m-d" }}</span>
+            </div>
+        </div>
+        
+        {# الوصف #}
+        {% if task.description %}
+            <div class="card">
+                <h3>Description</h3>
+                <p class="task-description">{{ task.description|linebreaks }}</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    {# العمود الجانبي - الصورة #}
+    {% if task.image %}
+        <div class="task-detail-side">
+            <div class="card">
+                <h3>Image</h3>
+                <a href="{{task.image.url}}" target="_blank" >
+                    <img src="{{ task.image.url }}" alt="{{ task.name }}" class="task-image">
+                </a>
+                </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

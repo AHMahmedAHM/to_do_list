@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Category{% else %}New Category{% endif %} — TaskFlow
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>
+        {% if form.instance.pk %}
+            Edit Category
+        {% else %}
+            New Category
+        {% endif %}
+    </h1>
+    <div class="page-header-actions">
+        <a href="{% url 'tasks:tasks_list' %}" class="btn btn-outline">← Back to Tasks</a>
+    </div>
+</div>
+
+<div class="card">
+    <form method="POST" class="task-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %} {# دي مهمة علشان لو خطا مش مرتبط بحقل معين ك unique constraint مرتبط بالname, user اذن هيظهر هنا #}
+            <div class="alert alert-error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Category Name</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <span class="form-error">{{ form.name.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if form.instance.pk %}
+                    Update Category
+                {% else %}
+                    Create Category
+                {% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
