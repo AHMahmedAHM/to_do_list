@@ -3,9 +3,11 @@ from .forms import TaskForm, CategoryForm
 from .models import Task 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
+from django.views.decorators.http import require_http_methods
 
 ##هل لو عاوز اي حد يقدر يستخدمها احوش الديكور واعمل ال user im model null,blank 
 @login_required 
+@require_http_methods(['GET'])
 def tasks_list(request):
     tasks = Task.objects.filter(user=request.user)
     context ={
@@ -19,6 +21,7 @@ def tasks_list(request):
 
 
 @login_required###محتاجها في كل دالة لاني بفلتر علي اساس المستخدن 
+@require_http_methods(['GET'])
 def task_details(request, slug):
     
     task = get_object_or_404(Task, user=request.user, slug=slug)
@@ -32,13 +35,14 @@ def task_details(request, slug):
 
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def add_task(request):
     if request.method == 'POST':
         form = TaskForm(request.POST, request.FILES, user=request.user) ##لاتنس محتاج الuser لفلترة الاقسام 
         if form.is_valid(): #يستدعي الclean
             task = form.save(commit=False)
             #شوف الحقول اللي لسه لم تضاف يدويا او تلقائيا 
-            task.user = request.user
+            task.user = request.user#اي حقل في الموديل وغير موجود في الفورم اما تلقائي او يديوي او غير مطلوب 
             task.save()
             return redirect('tasks:tasks_list') #PRG pattern 
     else :
@@ -48,10 +52,11 @@ def add_task(request):
         'form' : form,
     }
 
-    return render(request, 'tasks/add_task.html', context)
+    return render(request, 'tasks/task_form.html', context)
 
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def add_category(request):
 
     if request.method == 'POST':
@@ -72,18 +77,44 @@ def add_category(request):
 
 
 @login_required
+@require_http_methods(['POST'])
 def change_status(request, slug):
     task = get_object_or_404(Task, slug=slug, user=request.user)
     if task.status != 'later': #علشان لو لسه لم ابدا تنفيذ لا تتحدث حتي لا تنزل تحت 
         if task.status == "complete" :
             task.status ='doing'
-            messages.warning(request, 'تم الغاء اكتمال المهمة والمهمة اصبحت بالاسفل')
-    
 
         elif task.status =="doing" :
             task.status ='complete'
-    
+
         task.save() #فكرة الupdate كلها هنا 
+    else :
+        messages.info(request, "tasks's status must be (doing) or قيد التنفيذ")
+    return redirect('tasks:tasks_list') 
+
+
+@login_required
+@require_http_methods(['GET','POST']) #محتاج اديةالفورم في حالة لGET
+def update_task(request, slug):
+    task = get_object_or_404(Task, slug=slug, user=request.user)
+    
+    if request.method == 'POST':
+        form = TaskForm(request.POST, request.FILES, user=request.user, instance=task)
+        if form.is_valid():
+            new_task = form.save(commit=False)
+            #new_task.user = request.user  مش محتاجينها لانها موجودة بالفعل تحدييييث
+            new_task.save()
+            messages.success(request, 'task is updated successfully')
+            return redirect ('tasks:tasks_list') #PRG pattern
+    else:
+        form = TaskForm(user=request.user, instance=task)
+    return render(request, 'tasks/task_form.html', {'form':form}) #task_form.html هي هي نفس الصفحة الات غيير من اضافة الي تعديل مع وجود الinstance
+
+
+@login_required
+@require_http_methods(['POST'])
+def delete_task(request, slug):
+    task = get_object_or_404(Task, slug=slug, user=request.user)
+    task.delete()
+    messages.success(request,'task is deleted successfully')
     return redirect('tasks:tasks_list')
-
-

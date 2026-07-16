@@ -40,7 +40,7 @@ class Task(models.Model):
         constraints =[
             models.UniqueConstraint(fields=['slug', 'user'], name='unique_slug_per_user' ),
         ]
-        ordering = ['updated_at']
+        ordering = ['-created_at', 'updated_at']
 
     def get_absolute_url(self):
         return reverse('tasks:task_details', kwargs={'slug':self.slug})

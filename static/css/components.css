@@ -73,3 +73,17 @@
 
 .empty-state { text-align: center; padding: 48px 20px; color: var(--color-text-muted); }
 .empty-state p { margin-bottom: 16px; }
+
+.btn-danger {
+    background-color: transparent;
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+.btn-danger:hover {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.inline-form {
+    display: inline;
+}

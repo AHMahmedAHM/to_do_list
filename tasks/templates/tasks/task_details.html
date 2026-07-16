@@ -5,21 +5,18 @@
 {% block content %}
 <div class="page-header">
     <h1>{{ task.name }}</h1>
-    {% comment update %}
     <div class="page-header-actions">
-        <a href="{% url 'tasks:update_task' task.slug %}" class="btn btn-outline">Edit</a> 
-        <form method="POST" action="{% url 'tasks:delete_task' task.slug %}" style="display: inline;">
+        {# شوف حركة استعمال الرابط الجاية ب a or form #}
+        <a href="{% url 'tasks:update_task' task.slug %}" class="btn btn-outline">Edit</a>
+        <form method="POST" action="{% url 'tasks:delete_task' task.slug %}" class="inline-form">
             {% csrf_token %}
-            <button type="submit" class="btn btn-outline" style="color: var(--color-danger); border-color: var(--color-danger);" 
-                    onclick="return confirm('متأكد من حذف المهمة؟')">
+            <button type="submit" class="btn btn-danger" data-confirm="Delete this task? This can't be undone.">
                 Delete
             </button>
         </form>
-    {% endcomment %} 
         <a href="{% url 'tasks:tasks_list' %}" class="btn btn-outline">← Back</a>
     </div>
 </div>
-
 <div class="task-detail-grid">
     {# العمود الرئيسي #}
     <div class="task-detail-main">
